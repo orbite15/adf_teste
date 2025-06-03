@@ -1,0 +1,137 @@
+{
+	"name": "ppln_brk_poc_dlp_copy1",
+	"properties": {
+		"activities": [
+			{
+				"name": "Azure Function",
+				"type": "AzureFunctionActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"functionName": "HttpTrigger4",
+					"body": "{\nname:\"Azure\"\n}",
+					"headers": {
+						"dt_ini": {
+							"value": "@addDays(utcNow(),-365 ,'yyyy-MM-dd' )",
+							"type": "Expression"
+						},
+						"dt_fim": {
+							"value": "@addDays(utcNow(),-1 ,'yyyy-MM-dd' )",
+							"type": "Expression"
+						}
+					},
+					"method": "POST"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureFunction",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Notebook",
+				"type": "DatabricksNotebook",
+				"dependsOn": [
+					{
+						"activity": "Azure Function",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": {
+						"value": "@concat(pipeline().parameters.pathnotebook,pipeline().parameters.notebook)",
+						"type": "Expression"
+					},
+					"baseParameters": {
+						"value": {
+							"value": "@variables('dt_teste')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureDatabricks",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Delete",
+				"type": "Delete",
+				"dependsOn": [
+					{
+						"activity": "Notebook",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DelimitedText",
+						"type": "DatasetReference",
+						"parameters": {
+							"pasta_land": {
+								"value": "@pipeline().parameters.report",
+								"type": "Expression"
+							}
+						}
+					},
+					"enableLogging": false,
+					"storeSettings": {
+						"type": "AzureBlobStorageReadSettings",
+						"recursive": false,
+						"modifiedDatetimeStart": "2023-04-26T00:00:00Z",
+						"wildcardFileName": "*",
+						"enablePartitionDiscovery": false
+					}
+				}
+			}
+		],
+		"parameters": {
+			"pathnotebook": {
+				"type": "string",
+				"defaultValue": "/Users/lusilv50@braskem.com/"
+			},
+			"report": {
+				"type": "string",
+				"defaultValue": "reportdlp"
+			},
+			"notebook": {
+				"type": "string",
+				"defaultValue": "nb_dbk_complieprivacidade_o3645_dlpprep"
+			}
+		},
+		"variables": {
+			"dt_teste": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-07-26T18:55:58Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
