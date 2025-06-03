@@ -1,0 +1,9 @@
+{
+	"name": "adf-brk-poc",
+	"location": "eastus2",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2778030d-14b2-4bef-ae2e-15be7faada6f",
+		"tenantId": "cf36141c-ddd7-45a7-b073-111f66d0b30c"
+	}
+}

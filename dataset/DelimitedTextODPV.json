@@ -1,0 +1,23 @@
+{
+	"name": "DelimitedTextODPV",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorageODPV",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "task",
+				"container": "dataverse-renatadeoliv-unq582b6eb381ec44a296fd231979acb"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
